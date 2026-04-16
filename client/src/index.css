@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Manrope', system-ui, sans-serif;
+
+  /* Vigilant Editorial Concept */
+  --color-brand-50: #f4f6f9;
+  --color-brand-100: #e4e9f1;
+  --color-brand-500: #3b5998;
+  --color-brand-600: #2d4373;
+  --color-brand-900: #1a2642;
+
+  --color-surface-bg: #f9fafb;
+  --color-surface-card: #ffffff;
+  
+  --color-status-safe: #10b981;
+  --color-status-warning: #f59e0b;
+  --color-status-danger: #ef4444;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-50 text-brand-900 font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.05)];
+  }
+  
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm shadow-sm;
+  }
+}

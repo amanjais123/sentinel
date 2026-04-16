@@ -1,14 +1,19 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Button } from './ui/Button';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, User, Menu } from 'lucide-react';
 
-export function Navbar() {
+export function Navbar({ onMenuClick }) {
     const { user, logout } = useAuth();
 
     return (
         <header className="h-20 bg-white border-b border-brand-100 flex items-center justify-between sticky top-0 z-10 px-4 md:px-8">
-            <div className="md:hidden font-heading font-bold text-xl text-brand-900 tracking-tight">Sentinel</div>
+            <div className="flex items-center gap-3">
+                <Button variant="ghost" size="sm" className="md:hidden !px-2" onClick={onMenuClick}>
+                    <Menu size={24} className="text-brand-900" />
+                </Button>
+                <div className="md:hidden font-heading font-bold text-xl text-brand-900 tracking-tight">Sentinel</div>
+            </div>
             <div className="hidden md:block">
                 <h1 className="text-xl font-bold font-heading text-brand-900 m-0">Welcome back, {user?.name.split(' ')[0]}</h1>
             </div>

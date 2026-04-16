@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { Navbar } from '../components/Navbar';
 
 export function MainLayout() {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     return (
         <div className="flex h-screen bg-brand-50 font-sans text-brand-900 overflow-hidden">
-            <Sidebar />
+            <Sidebar isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
             <div className="flex-1 flex flex-col overflow-hidden">
-                <Navbar />
+                <Navbar onMenuClick={() => setIsMobileMenuOpen(true)} />
                 <main className="flex-1 overflow-y-auto p-4 md:p-8">
                     <div className="max-w-7xl mx-auto space-y-6">
                         <Outlet />

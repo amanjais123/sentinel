@@ -13,7 +13,7 @@ const server = http.createServer(app);
 
 // Allow CORS for the frontend origin
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://sentinel-asw.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));

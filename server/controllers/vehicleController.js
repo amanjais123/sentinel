@@ -1,5 +1,8 @@
+console.log("CONTROLLER FILE LOADED:", __filename);
+
 const db = require('../config/db');
 
+console.log("Resolved DB path:", require.resolve('../config/db'));
 // Helper to map db row to the format frontend expects
 const mapPlateToVehicle = (row) => {
   return {
@@ -31,7 +34,7 @@ const getLiveVehicles = async (req, res) => {
       WHERE COALESCE(a.status, 'pending') = 'pending'
       ORDER BY p.detected_at DESC
     `);
-    
+
     // Map data
     const liveVehicles = result.rows.map(mapPlateToVehicle);
     res.json(liveVehicles);
@@ -48,7 +51,7 @@ const getAllVehicles = async (req, res) => {
       ${baseQuery}
       ORDER BY p.detected_at DESC
     `);
-    
+
     const allVehicles = result.rows.map(mapPlateToVehicle);
     res.json(allVehicles);
   } catch (error) {
@@ -71,7 +74,7 @@ const approveVehicle = async (req, res) => {
 
     // Insert or update approval
     const approvalCheck = await db.query("SELECT id FROM approvals WHERE plate_id = $1", [id]);
-    
+
     if (approvalCheck.rows.length > 0) {
       await db.query(
         "UPDATE approvals SET status = 'approved', approved_by = $1, updated_at = CURRENT_TIMESTAMP WHERE plate_id = $2",
@@ -89,7 +92,7 @@ const approveVehicle = async (req, res) => {
       ${baseQuery}
       WHERE p.id = $1
     `, [id]);
-    
+
     const updatedVehicle = mapPlateToVehicle(updatedResult.rows[0]);
 
     // Emit socket event
@@ -118,7 +121,7 @@ const rejectVehicle = async (req, res) => {
 
     // Insert or update approval
     const approvalCheck = await db.query("SELECT id FROM approvals WHERE plate_id = $1", [id]);
-    
+
     if (approvalCheck.rows.length > 0) {
       await db.query(
         "UPDATE approvals SET status = 'rejected', updated_at = CURRENT_TIMESTAMP WHERE plate_id = $1",
@@ -136,7 +139,7 @@ const rejectVehicle = async (req, res) => {
       ${baseQuery}
       WHERE p.id = $1
     `, [id]);
-    
+
     const updatedVehicle = mapPlateToVehicle(updatedResult.rows[0]);
 
     // Emit socket event
@@ -164,7 +167,7 @@ const getStats = async (req, res) => {
       FROM plates p
       LEFT JOIN approvals a ON p.id = a.plate_id
     `);
-    
+
     // Convert counts from string to number since pg returns count as string
     const stats = {
       total: parseInt(result.rows[0].total) || 0,
@@ -172,7 +175,7 @@ const getStats = async (req, res) => {
       rejected: parseInt(result.rows[0].rejected) || 0,
       pending: parseInt(result.rows[0].pending) || 0,
     };
-    
+
     res.json(stats);
   } catch (error) {
     console.error('Error fetching stats:', error);

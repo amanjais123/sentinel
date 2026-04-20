@@ -8,7 +8,7 @@ const mapPlateToVehicle = (row) => {
   return {
     id: row.id,
     vehicleNumber: row.plate_text,
-    entryTime: row.detected_at,
+    entryTime: row.created_at,
     status: row.status || 'pending',
     type: 'visitor', // Default as per new requirement
     approvedBy: row.approved_by || null
@@ -19,7 +19,7 @@ const baseQuery = `
   SELECT
     p.id,
     p.plate_text,
-    p.detected_at,
+    p.created_at,
     COALESCE(a.status, 'pending') as status,
     a.approved_by
   FROM plates p
@@ -32,7 +32,7 @@ const getLiveVehicles = async (req, res) => {
     const result = await db.query(`
       ${baseQuery}
       WHERE COALESCE(a.status, 'pending') = 'pending'
-      ORDER BY p.detected_at DESC
+      ORDER BY p.created_at DESC
     `);
 
     // Map data
@@ -49,7 +49,7 @@ const getAllVehicles = async (req, res) => {
   try {
     const result = await db.query(`
       ${baseQuery}
-      ORDER BY p.detected_at DESC
+      ORDER BY p.created_at DESC
     `);
 
     const allVehicles = result.rows.map(mapPlateToVehicle);
@@ -188,10 +188,10 @@ const getAnalytics = async (req, res) => {
   try {
     const result = await db.query(`
       SELECT 
-        DATE(p.detected_at) as date,
+        DATE(p.created_at) as date,
         COUNT(*) as count
       FROM plates p
-      GROUP BY DATE(p.detected_at)
+      GROUP BY DATE(p.created_at)
       ORDER BY date ASC
     `);
 
@@ -224,7 +224,7 @@ const addVehicle = async (req, res) => {
     }
 
     const result = await db.query(
-      "INSERT INTO plates (plate_text, detected_at) VALUES ($1, CURRENT_TIMESTAMP) RETURNING *",
+      "INSERT INTO plates (plate_text) VALUES ($1) ON CONFLICT (plate_text) DO UPDATE SET created_at = CURRENT_TIMESTAMP RETURNING *",
       [vehicleNumber]
     );
 
